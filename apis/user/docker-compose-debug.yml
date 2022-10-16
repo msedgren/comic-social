@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: .
+      target: debug-tdd
+    user: "${DOCKER_BUILD_UID:-1000}:${DOCKER_BUILD_GID:-1000}"
+    ports:
+      - "127.0.0.1:5005:5005"

@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: ./apis/user
+      target: development
+    user: "${DOCKER_BUILD_UID:-1000}:${DOCKER_BUILD_GID:-1000}"
+    environment:
+      - spring_r2dbc_url=r2dbc:postgresql://db:5432
+      - spring_r2dbc_username=postgres
+      - spring_r2dbc_password=1234
+      - spring_r2dbc_name=comic_social
+    volumes:
+      - ./apis/user/src/:/home/jdk_user/src/:delegated
+      - ./apis/user/build/:/home/jdk_user/build/:delegated
+    ports:
+      - "8080:8080"
+
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: comic_social
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/postgres/:/docker-entrypoint-initdb.d:ro

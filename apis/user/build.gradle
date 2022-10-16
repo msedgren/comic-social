@@ -1,0 +1,130 @@
+plugins {
+	id 'org.springframework.boot' version '2.7.4'
+	id 'io.spring.dependency-management' version '1.0.14.RELEASE'
+	id "io.freefair.lombok" version "6.5.1"
+	id 'jacoco'
+	id 'java'
+}
+
+group = 'org.comic_social'
+version = '0.0.1'
+sourceCompatibility = '17'
+
+repositories {
+	mavenCentral()
+	maven { url 'https://repo.spring.io/milestone' }
+}
+
+bootJar {
+	archiveFileName = 'app.jar'
+}
+
+// treat warnings as errors
+compileJava {
+	options.compilerArgs << "-Xlint:all" << "-Xlint:-processing" << "-Werror"
+}
+
+// treat warnings as errors
+compileTestJava {
+	options.compilerArgs << "-Xlint:all" << "-Xlint:-processing" << "-Werror"
+}
+
+// needed to debug using docker
+bootRun {
+	if (project.hasProperty('jvmArgs')) {
+		jvmArgs = (project.jvmArgs.split("\\s+") as List)
+	}
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+
+	runtimeOnly 'io.r2dbc:r2dbc-postgresql:0.8.13.RELEASE'
+
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'io.projectreactor:reactor-test'
+
+	testImplementation 'io.r2dbc:r2dbc-h2'
+}
+
+tasks.named('test') {
+	// needed to debug using docker
+	if (project.hasProperty('jvmArgs')) {
+		jvmArgs = (project.jvmArgs.split("\\s+") as List)
+	}
+
+	useJUnitPlatform()
+
+	testLogging {
+		events = ["FAILED", "SKIPPED", "STANDARD_ERROR"]
+		showStackTraces = true
+		showCauses = true
+		exceptionFormat = "FULL"
+	}
+}
+
+jacocoTestReport {
+	// tests are required to run before generating the report
+	dependsOn test
+	afterEvaluate(filterJacocoFileAction(classDirectories))
+}
+
+Action<Project> filterJacocoFileAction(ConfigurableFileCollection classDirectories) {
+	return {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: [
+					//The main method is not executed as part of unit tests.
+					'**/*UserApplication**',
+					// Don't worry about DB config, although it is used to execute tests.
+					'**/*DatabaseConfiguration**'
+			])
+		}))
+	}
+}
+
+jacocoTestCoverageVerification {
+	afterEvaluate(filterJacocoFileAction(classDirectories))
+
+	violationRules {
+		rule {
+			limit {
+				counter = "LINE"
+				minimum = 1.00
+			}
+		}
+		rule {
+			limit {
+				counter = "BRANCH"
+				minimum = 1.00
+			}
+		}
+		rule {
+			limit {
+				counter = "METHOD"
+				minimum = 1.00
+			}
+		}
+		rule {
+			limit {
+				counter = "CLASS"
+				minimum = 1.00
+			}
+		}
+		rule {
+			limit {
+				counter = "COMPLEXITY"
+				minimum = 1.00
+			}
+		}
+		rule {
+			limit {
+				counter = "INSTRUCTION"
+				minimum = 1.00
+			}
+		}
+	}
+}
