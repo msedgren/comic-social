@@ -1,5 +1,5 @@
 plugins {
-	id 'org.springframework.boot' version '3.0.0-M5'
+	id 'org.springframework.boot' version '2.7.4'
 	id 'io.spring.dependency-management' version '1.0.14.RELEASE'
 	id "io.freefair.lombok" version "6.5.1"
 	id 'jacoco'
@@ -44,7 +44,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
 
-	testRuntimeOnly 'io.r2dbc:r2dbc-h2'
+	testImplementation 'io.r2dbc:r2dbc-h2'
 }
 
 tasks.named('test') {

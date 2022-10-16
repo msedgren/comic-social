@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: .
+      target: tdd
+    user: "${DOCKER_BUILD_UID:-1000}:${DOCKER_BUILD_GID:-1000}"
+    volumes:
+      - ./src/:/home/jdk_user/src/:delegated
+      - ./build/:/home/jdk_user/build/:delegated
