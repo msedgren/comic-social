@@ -1,11 +1,13 @@
-package org.comic_social.user_api;
+package org.comic_social.user_api.user;
 
+import org.comic_social.user_api.UserTest;
 import org.comic_social.user_api.name.NameDto;
-import org.comic_social.user_api.user.UserDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.UUID;
 
@@ -53,5 +55,27 @@ public class UserServiceTests {
         assertEquals("foo", user.username());
         assertEquals("a", user.name().firstName());
         assertEquals("b", user.name().lastName());
+    }
+
+    @Test
+    void itCanCountAllUsers() {
+        // expect it is 0 until users are added
+        assertEquals(0, userService.count().block());
+        // but when users are created
+        userService.create(new UserDto(null, "foo", new NameDto("a", "b")))
+                .then(userService.create(new UserDto(null, "bar", new NameDto("a", "b")))).block();
+        // expect that it is able to pull the correct count
+        assertEquals(2, userService.count().block());
+    }
+
+    @Test
+    void itCanFindAllUsers() {
+        // expect it finds nothing when none exist
+        assertEquals(0, userService.findAll(Pageable.ofSize(10)).toStream().count());
+        // but when users are created
+        userService.create(new UserDto(null, "foo", new NameDto("a", "b")))
+                .then(userService.create(new UserDto(null, "bar", new NameDto("a", "b")))).block();
+        // expect that it is able to pull them
+        assertEquals(2, userService.findAll(Pageable.ofSize(10)).toStream().count());
     }
 }

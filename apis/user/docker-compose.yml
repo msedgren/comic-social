@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  api:
+  user-api-tests:
     build:
       context: .
       target: tdd

@@ -1,4 +1,4 @@
-package org.comic_social.user_api;
+package org.comic_social.user_api.user;
 
 import lombok.AllArgsConstructor;
 import org.comic_social.user_api.name.Name;

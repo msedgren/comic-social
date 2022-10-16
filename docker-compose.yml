@@ -26,10 +26,5 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - "5432:5432"
-    #user: "${DOCKER_BUILD_UID:-1000}:${DOCKER_BUILD_GID:-1000}"
     volumes:
-      #- ./data/postgres/:/var/lib/postgresql/data/pgdata:delegated
-      # Exclude file to prevent postgres from complaining.
-      # Note: This will not work on a machine that does not have /dev/null (windows)
-      #- /dev/null:/var/lib/postgresql/data/pgdata/.gitkeep
       - ./db/postgres/:/docker-entrypoint-initdb.d:ro

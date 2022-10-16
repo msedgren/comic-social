@@ -31,14 +31,23 @@ ENTRYPOINT ["./gradlew", "bootRun", "-PjvmArgs=-agentlib:jdwp=transport=dt_socke
 ### build jar ###
 FROM gradle as build
 COPY --chown=$USER src ./src
-RUN ./gradlew clean bootJar
+RUN ./gradlew clean bootJar && \
+    mkdir explode && \
+    cd explode && \
+    jar -xf ~/build/libs/app.jar
 
 FROM build as coverage
-RUN ./gradlew clean test jacocoTestCoverageVerification
+RUN ./gradlew test jacocoTestCoverageVerification
 
 ### generate the production image ###
-## If using a native image, which is the hope, then need to figure out how to run this part.
-#FROM ???  as app
-#COPY --chown=root --from=coverage /home/jdk_user/explode/ ./
-#CMD ["java", "-cp", "BOOT-INF/classes:BOOT-INF/lib/*", "org.comic_social.user_api.UserApplication"]
-#EXPOSE 8080
+### TODO switch to native image with GRAAL.
+FROM eclipse-temurin:17-jre as jre
+ENV USER jre_user
+RUN groupadd -g 1000 $USER && useradd -u 1000 -g $USER $USER
+USER $USER
+WORKDIR /app
+
+FROM jre as app
+COPY --chown=root --from=coverage /home/jdk_user/explode/ ./
+CMD ["java", "-cp", "BOOT-INF/classes:BOOT-INF/lib/*", "org.comic_social.user_api.UserApplication"]
+EXPOSE 8080

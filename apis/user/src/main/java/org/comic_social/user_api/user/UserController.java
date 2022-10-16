@@ -1,7 +1,6 @@
-package org.comic_social.user_api;
+package org.comic_social.user_api.user;
 
 import lombok.AllArgsConstructor;
-import org.comic_social.user_api.user.UserDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,17 +14,18 @@ import java.util.UUID;
 @AllArgsConstructor
 public class UserController {
 
+    final static String PAGINATION_TOTAL_ELEMENTS_HEADER = "PAGINATION-TOTAL-ELEMENTS";
+
     private final UserService userService;
 
     @GetMapping("/")
     public Mono<ResponseEntity<Flux<UserDto>>> findAll(Pageable pageable) {
         return userService.count()
-                .map(c -> {
-                    return ResponseEntity
-                            .ok()
-                            .header("X-total-elements", String.valueOf(c))
-                            .body(userService.findAll(pageable));
-                });
+                .map(c ->
+                        ResponseEntity
+                                .ok()
+                                .header(PAGINATION_TOTAL_ELEMENTS_HEADER, String.valueOf(c))
+                                .body(userService.findAll(pageable)));
     }
 
     @GetMapping(path = "/", params = "username")
