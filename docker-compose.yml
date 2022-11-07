@@ -1,6 +1,16 @@
 version: "3.8"
 
 services:
+  comic-social-web-client:
+    build:
+      context: ./web-client/comic-social
+      target: development
+    user: "${DOCKER_BUILD_UID:-1000}:${DOCKER_BUILD_GID:-1000}"
+    volumes:
+      - ./web-client/comic-social/src:/home/node/src
+      - ./web-client/comic-social/public:/home/node/public
+    ports:
+      - "5173:5173"
   api:
     build:
       context: ./apis/user
@@ -16,7 +26,6 @@ services:
       - ./apis/user/build/:/home/jdk_user/build/:delegated
     ports:
       - "8080:8080"
-
   db:
     image: postgres:14
     restart: always
