@@ -16,17 +16,15 @@ A list of the already created components and planned components is given below.
 #### User API
 
 This was created using reactive components from Spring. Following from this, the REST API was written using WebFlux (Project Reactor with Mono/Flux) and
-the data layer using R2DBC.
-
-Once SpringBoot 3 is released, an attempt will be made to run the application using native compilation via GRAAL.
+the data layer using R2DBC. Native compilation was added via Graal.
 
 #### User Interface
 
-Work will be started on this next to leverage the APIs. Svelte will be the primary framework that is used.
+Svelte was used as the UI framework.
 
 #### Other APIs
 
-Rust will be used for the next API. My guess is that this would be around CRUD operations of images.
+Rust will be used for the next API. My guess is that this would be around CRUD operations of images or stories.
 
 #### Notes
 
