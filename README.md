@@ -9,7 +9,6 @@ Mostly though, it serves as a project to experiment with different technologies.
 2. Play with a few different technologies...
 
 
-
 ### technologies
 
 A list of the already created components and planned components is given below.
@@ -31,6 +30,9 @@ Rust will be used for the next API. My guess is that this would be around CRUD o
 
 #### Notes
 
-1. No work has been completed to hookup up authorization and authentication.
+1. No work has been completed to hookup up authorization and authentication. Hooking up with an OAuth provider... is a bit outside of the scope of this project.
 
 
+### Thoughts on Project
+
+[December 4, 2022](project-notes/04-12-2022.md)

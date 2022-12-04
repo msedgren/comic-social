@@ -1,18 +1,30 @@
 <script lang="ts">
   import Home from './routes/Home.svelte';
-  import { Router, Route, link } from "svelte-routing";
-  export let url = "";
+  import PageAlert from './lib/notification/PageAlert.svelte';
+  import StorySelector from './routes/StorySelector.svelte';
+  import {Router, Route} from "svelte-navigator";
+  import Authenticated from "./lib/user/Authenticated.svelte";
+  import Nav from "./lib/Nav.svelte";
+
+
 </script>
 
-<nav class="navbar navbar-expand-lg bg-light">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="/" use:link>Comic Socal</a>
-  </div>
-</nav>
+<Nav></Nav>
 <main class="container px-4">
   <div class="container">
-    <Router url="{url}">
-      <Route path="/"><Home /></Route>
+    <Router>
+      <PageAlert></PageAlert>
     </Router>
+    <Authenticated>
+      <span slot="authenticated">
+        <Router>
+          <Route path="/"><Home /></Route>
+          <Route path="/story-selector"><StorySelector /></Route>
+        </Router>
+      </span>
+      <span slot="unauthenticated">
+        <Home />
+      </span>
+    </Authenticated>
   </div>
 </main>

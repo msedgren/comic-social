@@ -9,6 +9,8 @@
 // 3. Include remainder of required Bootstrap stylesheets
 @import "node_modules/bootstrap/scss/variables";
 
+$btn-close-width: 0.75em;
+
 // 4. Include any default map overrides here
 
 // 5. Include remainder of required parts
@@ -22,6 +24,7 @@
 @import "node_modules/bootstrap/scss/type";
 @import "node_modules/bootstrap/scss/images";
 
+@import "node_modules/bootstrap/scss/alert";
 @import "node_modules/bootstrap/scss/buttons";
 @import "node_modules/bootstrap/scss/button-group";
 @import "node_modules/bootstrap/scss/card";
