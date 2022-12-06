@@ -38,17 +38,37 @@ ENTRYPOINT ["./gradlew", "bootRun"]
 FROM gradle as debug
 ENTRYPOINT ["./gradlew", "bootRun", "-PjvmArgs=-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005"]
 
-### build jar ###
 FROM gradle as build
 COPY --chown=$USER src ./src
-RUN ./gradlew clean nativeCompile
+RUN ./gradlew clean bootJar && \
+    mkdir explode && \
+    cd explode && \
+    jar -xf ~/build/libs/app.jar
 
 FROM build as coverage
 RUN ./gradlew test jacocoTestCoverageVerification
 
+FROM eclipse-temurin:17-jre as jre
+COPY --chown=root --from=coverage /home/jdk_user/explode/ ./
+
+ENV USER jre_user
+RUN groupadd -g 1000 $USER && useradd -u 1000 -g $USER $USER
+USER $USER
+
+WORKDIR /app
+
+FROM jre as app
+COPY --chown=root --from=coverage /home/jdk_user/explode/ ./
+ENTRYPOINT ["java", "-cp", "BOOT-INF/classes:BOOT-INF/lib/*", "org.comic_social.user_api.UserApplication"]
+EXPOSE 8080
+
+FROM coverage as native
+COPY --chown=$USER src ./src
+RUN ./gradlew nativeCompile
+
 ### generate the production image ###
-FROM debian:bullseye-slim as app
-COPY --chown=root --from=coverage /home/jdk_user/build/native/nativeCompile/app app
+FROM debian:bullseye-slim as app-native
+COPY --chown=root --from=native /home/jdk_user/build/native/nativeCompile/app app
 
 ENV USER jre_user
 RUN groupadd -g 1000 $USER && useradd -u 1000 -g $USER $USER

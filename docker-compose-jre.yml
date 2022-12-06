@@ -4,4 +4,4 @@ services:
   comic-social-user-api:
     build:
       context: ./apis/user
-      target: app-native
+      target: app
