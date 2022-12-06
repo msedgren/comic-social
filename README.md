@@ -33,4 +33,5 @@ Rust will be used for the next API. My guess is that this would be around CRUD o
 
 ### Thoughts on Project
 
-[December 4, 2022](project-notes/04-12-2022.md)
+[December 4, 2022 - Starting project notes](project-notes/04-12-2022.md)
+[December 5, 2022 - Native Java compilation comparison](project-notes/05-12-2022/05-12-2022.md)
